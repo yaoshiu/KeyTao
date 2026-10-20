@@ -33,7 +33,7 @@ layout:
 switches:
   - name: ascii_mode
     reset: 0
-    states: [ 中文, 西文 ]
+# 不显示内部中英文开关；保留 reset: 0，确保初始化为中文。
   - name: full_shape
     states: [ 半角, 全角 ]
   - name: simplification

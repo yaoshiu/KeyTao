@@ -4,14 +4,10 @@
 
  
 patch:
-  us_keyboard_layout: true      # 鍵盤選項：應用美式鍵盤佈局
+  keyboard_layout: default     # 固定使用美式 QWERTY（ABC），不跟隨系統佈局
   show_notifications_via_notification_center: true
-  app_options/org.gnu.Emacs:
-    ascii_mode: true
-    no_inline: false
-  app_options/com.apple.Terminal:
-    ascii_mode: true
-    no_inline: false
+  # 清除鼠须管内置的应用英文模式，统一使用中文。
+  app_options: {}
   # style/horizontal: true        # 候選窗横向顯示
   style/font_face: "PingFangSC-Medium,NotoSansCJKsc-Medium,HanaMinA"
   style/label_font_point: 14 #候選編號大小

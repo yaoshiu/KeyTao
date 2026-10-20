@@ -11,7 +11,12 @@ patch:
     - schema: keytao-bj
   menu:
     page_size: 6
+  # 中英文切换交给系统，禁用 Rime 内部的切换键。
   ascii_composer/good_old_caps_lock: true
   ascii_composer/switch_key:
-    Caps_Lock: commit_text
-    Shift_L: commit_text
+    Caps_Lock: noop
+    Shift_L: noop
+    Shift_R: noop
+    Control_L: noop
+    Control_R: noop
+    Eisu_toggle: noop
