@@ -1,0 +1,53 @@
+name: Sync upstream
+
+on:
+  schedule:
+    # Daily at 09:17 Asia/Singapore (01:17 UTC).
+    - cron: '17 1 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-upstream
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    if: github.repository == 'yaoshiu/KeyTao'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+    steps:
+      - name: Check out default branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          fetch-depth: 0
+
+      - name: Merge upstream master
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch --no-tags https://github.com/xkinput/KeyTao.git master
+          upstream_commit=$(git rev-parse FETCH_HEAD)
+
+          if git merge-base --is-ancestor "$upstream_commit" HEAD; then
+            echo 'Already up to date.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          # Use a normal merge to retain local customizations. Never force push.
+          if ! git merge --no-edit "$upstream_commit"; then
+            echo '::error::Upstream merge conflicted. Resolve locally and push before retrying.'
+            git diff --name-only --diff-filter=U
+            git merge --abort
+            exit 1
+          fi
+
+          git push origin "HEAD:refs/heads/$TARGET_BRANCH"
+          echo "Synced upstream commit $upstream_commit into $TARGET_BRANCH." >> "$GITHUB_STEP_SUMMARY"
