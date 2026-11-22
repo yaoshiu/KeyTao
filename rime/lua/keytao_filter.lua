@@ -11,7 +11,7 @@ end
 
 local function ensure_reverse(env)
     if not env.reverse then
-        env.reverse = ReverseDb("build/keytao.extended.reverse.bin")
+        env.reverse = ReverseDb(env.reverse_path)
     end
     return env.reverse
 end
@@ -74,10 +74,6 @@ local function filter(input, env)
 
     local no_commit = topup_hint_on and input_text:len() < 4 and input_text:match(env.pat_no_commit)
     for cand in input:iter() do
-        if first and no_commit and cand.type ~= 'completion' then
-            commit_hint(cand, env.hint_text)
-        end
-        first = false
         if not is_danzi or danzi(cand) then
             local has_630 = false
             if is_on then
@@ -85,6 +81,12 @@ local function filter(input, env)
                 reverse_used = reverse_used or env.reverse ~= nil
             end
             if not has_630 or not disable_full then
+                if first and cand.type ~= 'completion' then
+                    if no_commit then
+                        commit_hint(cand, env.hint_text)
+                    end
+                    first = false
+                end
                 yield(cand)
             end
         end
@@ -97,7 +99,13 @@ local function filter(input, env)
 end
 
 local function init(env)
+    local dict = env.engine.schema.config:get_string("translator/dictionary")
+    if not dict or dict == "" then
+        dict = "keytao.extended"
+    end
+
     env.reverse         = nil
+    env.reverse_path    = "build/" .. dict .. ".reverse.bin"
     env.hint_text       = env.engine.schema.config:get_string('hint_text') or '🚫'
     env.pat_short_vowel = "([bcdefghjklmnpqrstwxyz][auiov]+)"
     env.pat_short_cons  = "([bcdefghjklmnpqrstwxyz][bcdefghjklmnpqrstwxyz])"

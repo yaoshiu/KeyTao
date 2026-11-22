@@ -5,14 +5,11 @@ schema:
   schema_id: keytao
   name: 键道6
   version: "2.2"
-  dependencies:
-    - keytao-cx
 
 
 # Layout config
 layout:
   topup:
-    topup_this: "bcdefghjklmnpqrstwxyz"
     topup_with: "avuio;"
 
   algebra:
@@ -30,11 +27,6 @@ layout:
   #   date: orq
   #   time: ouj
   #   week: oxq
-
-  patterns:
-    special: "^(?:;?[avuio])[a-z]{0,}"
-    # input_code: "^(?:orq?|ouj?|oxq?)"
-
 
 switches:
   - name: ascii_mode
@@ -76,7 +68,7 @@ punctuator:
     ':' : { commit: ： }
     '''' : { pair: [ '‘', '’' ] }
     '"' : { pair: [ '“', '”' ] }
-    '\' : [ '、', '＼' ]
+    '\' : { commit: 、 }
     '|' : [ '·', '｜', '§', '¦' ]
     '`' : "｀"
     '~' : '～'
@@ -109,7 +101,7 @@ punctuator:
     ':' : { commit: ： }
     '''' : { pair: [ '‘', '’' ] }
     '"' : { pair: [ '“', '”' ] }
-    '\' : [ 、, '\', ＼ ]
+    '\' : { commit: 、 }
     '|' : [ ·, '|', ｜, '§', '¦' ]
     '`' : '`'
     '~' : [ '~', ～ ]
@@ -171,8 +163,8 @@ speller:
     __include: "layout/algebra"
   auto_select: false
   auto_select_unique_candidate: false
-  alphabet: "abcdefghijklmnopqrstuvwxyz;/`"
-  initials: "abcdefghijklmnopqrstuvwxyz;/`"
+  alphabet: "abcdefghijklmnopqrstuvwxyz;/=`"
+  initials: "abcdefghijklmnopqrstuvwxyz;/=`"
 
 
 translator:
@@ -239,7 +231,6 @@ key_binder:
 
 recognizer:
   patterns:
-    # __include: "layout/patterns"
     punct: "^/([0-9]0?|[a-z]+)$"
     danzi_lookup: "[a-z`]*`+[a-z`]*"
     email: "^[a-z][-_.0-9a-z]*@.*$"

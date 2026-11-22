@@ -5,14 +5,11 @@ schema:
   schema_id: keytao-dz
   name: 键道6单字
   version: "2.2"
-  dependencies:
-    - keytao-cx
 
 
 # Layout config
 layout:
   topup:
-    topup_this: "bcdefghjklmnpqrstwxyz"
     topup_with: "avuio;"
 
   algebra:
@@ -26,10 +23,6 @@ layout:
     - derive/^([bcdefghjklmnpqrstwxyz;`]{2}[avuio`]{5}).$/$1`/
     - derive/^[bcdefghjklmnpqrstwxyz;]{2}([avuio`]*)$/``$1/
 
-  patterns:
-    special: "^(?:;?[avuio])[a-z]{0,}"
-
-
 switches:
   - name: ascii_mode
     reset: 0
@@ -42,6 +35,8 @@ switches:
   - name: emoji_cn
     reset: 0
     states: [ "关表情", "开表情" ]
+  - name: danzi_mode
+    reset: 0
   - name: sbb_hint
     reset: 1
     states: [ "关₆₃₀", "开₆₃₀" ]
@@ -67,7 +62,7 @@ punctuator:
     ':' : { commit: ： }
     '''' : { pair: [ '‘', '’' ] }
     '"' : { pair: [ '“', '”' ] }
-    '\' : [ '、', '＼' ]
+    '\' : { commit: 、 }
     '|' : [ '·', '｜', '§', '¦' ]
     '`' : "｀"
     '~' : '～'
@@ -100,7 +95,7 @@ punctuator:
     ':' : { commit: ： }
     '''' : { pair: [ '‘', '’' ] }
     '"' : { pair: [ '“', '”' ] }
-    '\' : [ 、, '\', ＼ ]
+    '\' : { commit: 、 }
     '|' : [ ·, '|', ｜, '§', '¦' ]
     '`' : '`'
     '~' : [ '~', ～ ]
@@ -147,7 +142,6 @@ engine:
     - table_translator
     - history_translator@repeat_history
     - table_translator@custom_phrase
-    - table_translator@danzi_lookup
     - lua_translator@oboot_translator
     - lua_translator@number_translator
   filters:
@@ -238,7 +232,6 @@ recognizer:
     pinyin: "(?<![`A-Z])`[a-z']*;?$"
     url: "^(www[.]|https?:|ftp:|mailto:).*$"
     jsq: "^=[^;']+$"
-    english: "^'[A-Z|a-z]*'?$"
 
 
 topup:
